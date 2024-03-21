@@ -19,7 +19,7 @@
         <div class="row">
             <div class="col">
                 <i id="cerrado" class="fa-regular fa-lightbulb" style="font-size: xx-large;color: red;"></i>
-                <i id="abieto" class="fa-solid fa-lightbulb" style="font-size: xx-large;color: greenyellow;"></i>
+                <i id="abierto" class="fa-solid fa-lightbulb" style="font-size: xx-large;color: greenyellow;"></i>
             </div>
             <div class="col">
                 <p id="hora" class="lead"></p>
@@ -31,17 +31,11 @@
     </main>
 
     <script type="module">
-        const abieto = document.querySelector('#abieto');
-        const cerrado = document.querySelector('#cerrado');
-        const hora = document.querySelector('#hora');
-
-        // Import the functions you need from the SDKs you need
+        // Importa las funciones necesarias
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js';
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-        import { getFirestore, query, collection, onSnapshot, orderBy, Timestamp, doc } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+        import { getFirestore, query, collection, onSnapshot, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
 
-        // Your web app's Firebase configuration
+        // Tu configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDWwiCdBeboaSDYaj_lIExlR6KycWz-MgQ",
             authDomain: "arduino-12f4d.firebaseapp.com",
@@ -51,24 +45,19 @@
             appId: "1:518839453994:web:009b53d5678d5f0279f653"
         };
 
-        // Initialize Firebase
+        // Inicializa Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Consulta los datos de la colección 'luces' ordenados por hora descendente
         const q = query(collection(db, 'luces'), orderBy('hora', 'desc'));
 
-        onSnapshot(q, (data) => {
-            const estadoRfid = data.docs[0]
-            updateEstadoRfid(estadoRfid);
-        });
-
+        // Función para actualizar el estado RFID
         const updateEstadoRfid = (estadoRfid) => {
             const estado = estadoRfid.data().estado;
-            const timeStamp = new Timestamp(estadoRfid.data().hora.seconds,
-            estadoRfid.data().hora.nanoseconds);
+            const timeStamp = new Timestamp(estadoRfid.data().hora.seconds, estadoRfid.data().hora.nanoseconds);
             const fecha = `${timeStamp.toDate().toLocaleDateString()}-${timeStamp.toDate().toLocaleTimeString()}`;
-            console.log(estado, fecha);                              
-                
+
             if (estado == 0) {
                 abierto.style.visibility = "hidden";
                 cerrado.style.visibility = "visible";
@@ -78,8 +67,33 @@
             }
             hora.textContent = fecha;
         }
+
+        // Escucha los cambios en la consulta y actualiza el estado RFID
+        onSnapshot(q, (data) => {
+            const estadoRfid = data.docs[0]
+            updateEstadoRfid(estadoRfid);
+        });
+
+        // Bucle principal para la detección de la tarjeta RFID
+        const loop = () => {
+            // Si se detecta una tarjeta RFID
+            if (tarjeta_rfid.isCard()) {
+                console.log("Tarjeta detectada:");
+
+                // Leemos la tarjeta
+                tarjeta_rfid.readCardSerial();
+
+                // Imprimimos el número de serie de la tarjeta
+                for (let i = 0; i < 5; i++) {
+                    console.log(tarjeta_rfid.serNum[i]);
+                }
+            }
+            setTimeout(loop, 1000); // Espera 1 segundo antes de ejecutar nuevamente el loop
+        };
+
+        // Llama al bucle principal por primera vez
+        loop();
     </script>
 </body>
 
 </html>
-
