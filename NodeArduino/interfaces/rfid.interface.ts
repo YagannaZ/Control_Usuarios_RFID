@@ -1,4 +1,4 @@
 export interface IRfid {
-    estado: boolean;
+    estado: string; // bloqueado, desbloqueado
     hora: Date;
   }
