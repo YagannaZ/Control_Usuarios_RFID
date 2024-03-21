@@ -69,7 +69,7 @@
             const fecha = `${timeStamp.toDate().toLocaleDateString()}-${timeStamp.toDate().toLocaleTimeString()}`;
             console.log(estado, fecha);                              
                 
-            if (estado == 'bloqueado') {
+            if (estado == 0) {
                 abierto.style.visibility = "hidden";
                 cerrado.style.visibility = "visible";
             } else {
