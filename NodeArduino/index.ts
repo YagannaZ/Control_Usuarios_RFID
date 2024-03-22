@@ -33,11 +33,11 @@ arduinoSerialPort.on('open', () => {
 parser.on('data', async (data) => {
   console.log(data);
   try {
-    const dataLuz: IRfid = {
+    const dataRfid: IRfid = {
       estado: data,
       hora: new Date()
     };
-    await addDoc(collection(db, 'luces'), dataLuz);
+    await addDoc(collection(db, 'luces'), dataRfid);
   } catch (error) {
     console.log(error);
   }
