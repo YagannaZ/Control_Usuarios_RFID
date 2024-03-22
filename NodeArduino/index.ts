@@ -5,15 +5,15 @@ import { SerialPort } from 'serialport';
 import { ReadlineParser } from '@serialport/parser-readline';
 // https://serialport.io/docs/api-parser-readline
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { IRfid } from './interfaces/rfid.interface';
 import { firebase } from './firebase/config';
+import { IRfid } from './interfaces/rfid.interface';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-const arduinoSerialPort = new SerialPort({ path: 'COM4', baudRate: 9600 });
+const arduinoSerialPort = new SerialPort({ path: 'COM6', baudRate: 9600 });
 const parser = arduinoSerialPort.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 
 const db = getFirestore(firebase);
@@ -27,17 +27,20 @@ arduinoSerialPort.on('open', () => {
 });
 
 // arduinoSerialPort.on('data', (data) => {
-//   console.log(data);
+//   console.log(data.toString());
 // });
 
 parser.on('data', async (data) => {
-  console.log(data);
+  const lectura:IRfid = JSON.parse(data);
+  console.log(lectura);
+  
   try {
     const dataRfid: IRfid = {
-      estado: data,
-      hora: new Date()
+      estado: lectura.estado,
+      hora: new Date(), 
+      clave:lectura.clave
     };
-    await addDoc(collection(db, 'luces'), dataRfid);
+    await addDoc(collection(db, 'usuarios'), dataRfid);
   } catch (error) {
     console.log(error);
   }
