@@ -31,16 +31,38 @@ arduinoSerialPort.on('open', () => {
 // });
 
 parser.on('data', async (data) => {
-  const lectura:IRfid = JSON.parse(data);
+  const lectura: IRfid = JSON.parse(data);
   console.log(lectura);
-  
+
   try {
     const dataRfid: IRfid = {
+      nombreUsuario: lectura.nombreUsuario,
       estado: lectura.estado,
-      hora: new Date(), 
-      clave:lectura.clave
+      hora: new Date(),
+      clave: lectura.clave
     };
+    ///////////////////////////////////////////
+    // Consultar la base de datos para verificar la autorización de la tarjeta
+   const tarjetaRef = db.collection('tarjetas').doc(lectura.clave);
+    const tarjetaDoc = await tarjetaRef.get();
     await addDoc(collection(db, 'usuarios'), dataRfid);
+    if (tarjetaDoc.exists) {
+      //const nombreUsuario = tarjetaDoc.data().nombre;
+      if (lectura.estado) {
+        console.log(`Acceso concedido a ${lectura.nombreUsuario}`);
+        // Enviar mensaje a Arduino para permitir el acceso
+        arduinoSerialPort.write('ACCESO_PERMITIDO');
+      } else {
+        console.log(`Acceso denegado a ${lectura.nombreUsuario}`);
+        // Enviar mensaje a Arduino para denegar el acceso
+        arduinoSerialPort.write('ACCESO_DENEGADO');
+      }
+    } else {
+      console.log('Tarjeta no registrada');
+      // Enviar mensaje a Arduino para denegar el acceso
+      arduinoSerialPort.write('ACCESO_DENEGADO');
+    }
+    ////////////////////////////////////////////////////////////////
   } catch (error) {
     console.log(error);
   }

@@ -1,5 +1,6 @@
 export interface IRfid {
-    estado: boolean; // bloqueado, desbloqueado
-    clave: string;
-    hora: Date;
-  }
+  nombreUsuario: string;
+  estado: boolean; // bloqueado, desbloqueado
+  clave: string;
+  hora: Date;
+}

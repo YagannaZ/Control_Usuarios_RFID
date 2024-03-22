@@ -17,15 +17,19 @@
         <h1 class="display-1">Estado RFID</h1>
         <hr>
         <div class="row">
-            <div class="col">
-                <i id="cerrado" class="fa-regular fa-lightbulb" style="font-size: xx-large;color: red;"></i>
-                <i id="abierto" class="fa-solid fa-lightbulb" style="font-size: xx-large;color: greenyellow;"></i>
+            <div class="col-9">
+                <p class="display-6">Acceso:
+                    <span id="acceso"></span>
+                </p>
+                <p class="display-6">Tarjeta número:
+                    <span id="clave"></span>
+                </p>
             </div>
-            <div class="col">
+            <div class="col-3">
                 <p id="hora" class="lead"></p>
             </div>
-            <hr class="mt-4" />
         </div>
+        <hr class="mt-4">
 
         <footer>&copy; A Team - 2024</footer>
     </main>
@@ -49,50 +53,29 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Consulta los datos de la colección 'luces' ordenados por hora descendente
-        const q = query(collection(db, 'luces'), orderBy('hora', 'desc'));
+        // Consulta los datos de la colección 'usuarios' ordenados por hora descendente
+        const q = query(collection(db, 'usuarios'), orderBy('hora', 'desc'));
 
         // Función para actualizar el estado RFID
         const updateEstadoRfid = (estadoRfid) => {
             const estado = estadoRfid.data().estado;
+            console.log(estado);
+            const clave = estadoRfid.data().clave;
+            const accesoElement = document.querySelector("#acceso");
+            const accesoClave = document.querySelector("#clave");
             const timeStamp = new Timestamp(estadoRfid.data().hora.seconds, estadoRfid.data().hora.nanoseconds);
             const fecha = `${timeStamp.toDate().toLocaleDateString()}-${timeStamp.toDate().toLocaleTimeString()}`;
 
-            if (estado == 0) {
-                abierto.style.visibility = "hidden";
-                cerrado.style.visibility = "visible";
-            } else {
-                abierto.style.visibility = "visible";
-                cerrado.style.visibility = "hidden";
-            }
+            accesoElement.textContent = estado
+            accesoClave.textContent = clave;
             hora.textContent = fecha;
-        }
-
-        // Escucha los cambios en la consulta y actualiza el estado RFID
-        onSnapshot(q, (data) => {
-            const estadoRfid = data.docs[0]
-            updateEstadoRfid(estadoRfid);
-        });
-
-        // Bucle principal para la detección de la tarjeta RFID
-        const loop = () => {
-            // Si se detecta una tarjeta RFID
-            if (tarjeta_rfid.isCard()) {
-                console.log("Tarjeta detectada:");
-
-                // Leemos la tarjeta
-                tarjeta_rfid.readCardSerial();
-
-                // Imprimimos el número de serie de la tarjeta
-                for (let i = 0; i < 5; i++) {
-                    console.log(tarjeta_rfid.serNum[i]);
-                }
-            }
-            setTimeout(loop, 1000); // Espera 1 segundo antes de ejecutar nuevamente el loop
         };
 
-        // Llama al bucle principal por primera vez
-        loop();
+        // Listener para escuchar los cambios en la base de datos
+        onSnapshot(q, (data) => {
+            const ultimoAcceso = data.docs[0]
+            updateEstadoRfid(ultimoAcceso);
+        });
     </script>
 </body>
 
