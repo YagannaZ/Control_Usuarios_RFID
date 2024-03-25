@@ -3,8 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { SerialPort } from 'serialport';
 import { ReadlineParser } from '@serialport/parser-readline';
-// https://serialport.io/docs/api-parser-readline
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { firebase } from './firebase/config';
 import { IRfid } from './interfaces/rfid.interface';
 
@@ -14,6 +13,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const arduinoSerialPort = new SerialPort({ path: 'COM6', baudRate: 9600 });
+const arduinoSerialPort2 = new SerialPort({ path: 'COM7', baudRate: 9600 });
 const parser = arduinoSerialPort.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 
 const db = getFirestore(firebase);
@@ -26,43 +26,47 @@ arduinoSerialPort.on('open', () => {
   console.log('Conexión con placa Arduino establecida');
 });
 
-// arduinoSerialPort.on('data', (data) => {
-//   console.log(data.toString());
-// });
-
 parser.on('data', async (data) => {
   const lectura: IRfid = JSON.parse(data);
   console.log(lectura);
 
   try {
-    const dataRfid: IRfid = {
-      nombreUsuario: lectura.nombreUsuario,
-      estado: lectura.estado,
-      hora: new Date(),
-      clave: lectura.clave
-    };
-    ///////////////////////////////////////////
-    // Consultar la base de datos para verificar la autorización de la tarjeta
-   const tarjetaRef = db.collection('tarjetas').doc(lectura.clave);
-    const tarjetaDoc = await tarjetaRef.get();
-    await addDoc(collection(db, 'usuarios'), dataRfid);
-    if (tarjetaDoc.exists) {
-      //const nombreUsuario = tarjetaDoc.data().nombre;
-      if (lectura.estado) {
-        console.log(`Acceso concedido a ${lectura.nombreUsuario}`);
-        // Enviar mensaje a Arduino para permitir el acceso
-        arduinoSerialPort.write('ACCESO_PERMITIDO');
+    const usuariosRef = collection(db, 'usuarios');
+    const usuariosSnapshot = await getDocs(usuariosRef);
+    const clavesRegistradas = usuariosSnapshot.docs.map(doc => doc.data().clave);
+
+    const q = query(collection(db, 'usuarios'), where('clave', '==', lectura.clave));
+    const querySnapshot = await getDocs(q);
+    const users = querySnapshot.docs.map(doc => doc.data());
+    const hasActiveUser = users.some(user => user.activo === true);
+
+    if (lectura.clave) {
+      if (hasActiveUser) {
+        arduinoSerialPort2.write('Hola: ' + users[0].nombre);
+         //arduinoSerialPort2.write('1');
+        // { estado: 'Acceso Denegado', clave: '34, 213, 254, 100, 109' }
+        // [ { nombre: 'Iñaki', clave: '34, 213, 254, 100, 109', activo: true } ]
+        // Acceso permitido
+
+        // const encoder = new TextEncoder();
+        // const utf8Array = encoder.encode(nombre);
+        // const utf8String = String.fromCharCode.apply(null, utf8Array);
+        
+        console.log('Acceso permitido');
+
+        //IMPRIMIR STRING EN LCD
+        // arduinoSerialPort2.write(nombre[0] );
+        // arduinoSerialPort2.write('ACCESO_PERMITIDO');
       } else {
-        console.log(`Acceso denegado a ${lectura.nombreUsuario}`);
-        // Enviar mensaje a Arduino para denegar el acceso
-        arduinoSerialPort.write('ACCESO_DENEGADO');
+        //BOOLEAN FALSE
+        arduinoSerialPort2.write('0');
+        console.log('Acceso denegado');
+        arduinoSerialPort2.write('ACCESO_DENEGADO');
       }
-    } else {
-      console.log('Tarjeta no registrada');
-      // Enviar mensaje a Arduino para denegar el acceso
-      arduinoSerialPort.write('ACCESO_DENEGADO');
     }
-    ////////////////////////////////////////////////////////////////
+    // "34, 213, 254, 100, 109"
+
+    await addDoc(collection(db, 'accesos'), lectura);
   } catch (error) {
     console.log(error);
   }
@@ -71,3 +75,4 @@ parser.on('data', async (data) => {
 app.listen(port, () => {
   console.log('Servidor en ejecución en puerto ' + port);
 });
+
