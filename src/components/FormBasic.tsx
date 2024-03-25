@@ -9,7 +9,7 @@ import {
     QueryDocumentSnapshot,
     DocumentData
 } from 'firebase/firestore';
-import { db } from '../firebase/firebase.config';
+import { db } from '../../NodeArduino/firebase/config.ts';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useSubmit } from 'react-router-dom';
 import { IUser } from '../interfaces/userInterface.interface';
