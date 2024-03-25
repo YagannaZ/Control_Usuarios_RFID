@@ -5,3 +5,13 @@
 // import TableHead from '@mui/material/TableHead';
 // import TableRow from '@mui/material/TableRow';
 // import Paper from '@mui/material/Paper';
+
+function UserTablePage () {
+    return (
+        <>
+        <h1>Holas</h1>
+        </>
+    )
+}
+
+export default UserTablePage
