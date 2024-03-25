@@ -1,15 +1,10 @@
 import {
     collection,
     getDoc,
-    getDocs,
     doc,
     addDoc,
-    setDoc,
-    deleteDoc,
-    QueryDocumentSnapshot,
-    DocumentData
 } from 'firebase/firestore';
-import { db } from '../../NodeArduino/firebase/config.ts';
+import { db } from '../firebase/firebase.config';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { IUser } from '../interfaces/userInterface.interface';
 import AlertUserForm from './AlertUserForm';
@@ -113,7 +108,7 @@ function Form() {
                             placeholder="rfid"
                             value={RFID}
                             onChange={onInputChange} />
-                        <label htmlFor="rfid">Valores RFID</label>
+                        <label htmlFor="rfid">RFID</label>
                     </div>
                     <button type='submit' className='btn btn-dark mt-2'>Guardar usuario</button>
                     <button className='btn btn-danger mt-2' onClick={resetForm}>Vaciar formulario</button>
