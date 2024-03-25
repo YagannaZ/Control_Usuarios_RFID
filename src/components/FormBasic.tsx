@@ -11,7 +11,6 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase/firebase.config';
 import { ChangeEvent, FormEvent, useState } from 'react';
-import { useSubmit } from 'react-router-dom';
 import { IUser } from '../interfaces/userInterface.interface';
 import AlertUserForm from './AlertUserForm';
 
@@ -51,6 +50,7 @@ function Form() {
 
     //Guardar y activar usuario
     const newUser = async (e: FormEvent) => {
+        
         e.preventDefault()
         //COMPROBAR QUE LOS INPUTS TIENE ALGO ESCRITO
         if (name && RFID) {
@@ -65,7 +65,8 @@ function Form() {
                     RFID: RFID,
                     active: 'activo'
                 });
-                
+
+
                 setMensaje('Usuario registrado.')
                 setAlert('success')
                 setShowAlert(true)
@@ -90,10 +91,10 @@ function Form() {
     return (
 
         <>
-            <div className="container">
+            <div className="container ">
                 <h1>Formulario</h1>
 
-                <form onSubmit={newUser}>
+                <form onSubmit={newUser} className='pt-3'>
 
                     <div className="form-floating m-3">
                         <input type="text"
@@ -118,7 +119,7 @@ function Form() {
                     <button className='btn btn-danger mt-2' onClick={resetForm}>Vaciar formulario</button>
 
                 </form>
-                {showAlert && <AlertUserForm type={alert} mensaje={mensaje}/>}
+                {showAlert && <AlertUserForm type={alert} mensaje={mensaje} />}
             </div>
 
         </>
@@ -127,3 +128,10 @@ function Form() {
 }
 
 export default Form
+
+// export function setupAlerta(mensaje: string, tipo: string, boolean: boolean)=> {
+
+//     setMensaje(mensaje)
+//     setAlert(tipo)
+//     setShowAlert(boolean)
+// }

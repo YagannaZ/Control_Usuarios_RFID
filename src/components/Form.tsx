@@ -1,65 +1,71 @@
-import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import IUser
-// import './MyForm.css'; // Importa tu archivo CSS para los estilos del formulario
+// import React from 'react';
+// import { Formik, Form , Field, ErrorMessage } from 'formik';
+// import { IUser } from '../interfaces/userInterface.interface';
+// // import './MyForm.css'; // Importa tu archivo CSS para los estilos del formulario
 
-interface FormValues {
-    name: string;
-    email: string;
-}
+// const initialValues: IUser = {
+//     name: '',
+//     RFID: '',
+//     active: ''
+// };
 
-const initialValues: FormValues = {
-    name: '',
-    email: '',
-};
+// const UserForm = () => {
+//     const handleSubmit = (values: IUser) => {
+//         console.log(values);
+//         console.log('Aquí hay que hacer cosas')
+//         // Codigo
+//     };
 
-const MyForm: React.FC = () => {
-    const handleSubmit = (values: FormValues) => {
-        console.log(values);
-        // Aquí podrías enviar los datos a tu servidor o hacer otras operaciones
-    };
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//     const validate = (values: IUser) => {
+//         const errors: Partial<IUser> = {};
 
-    const validate = (values: FormValues) => {
-        const errors: Partial<FormValues> = {};
+//         if (!values.name) {
+//             errors.name = 'Campo obligatorio';
+//         }
 
-        if (!values.name) {
-            errors.name = 'Campo obligatorio';
-        }
+//         if (!values.RFID) {
+//             errors.RFID = 'Campo obligatorio';
 
-        if (!values.email) {
-            errors.email = 'Campo obligatorio';
-        } else if (!/^\S+@\S+\.\S+$/.test(values.email)) {
-            errors.email = 'Formato de email inválido';
-        }
+//             // } else if (values.active) {
+//             //     errors.active = false;
+//             // }
 
-        return errors;
-    };
+//             return errors;
+//         }}
 
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            validate={validate}
-        >
-            {() => (
-                <Form className="my-form"> {/* Aplica la clase CSS */}
-                    <div className="form-group">
-                        <label htmlFor="name">Nombre:</label>
-                        <Field type="text" id="name" name="name" className="form-control" />
-                        <ErrorMessage name="name" component="div" className="error-message" />
-                    </div>
+//         return (
+            
+//             <Formik
+//                 initialValues={initialValues}
+//                 onSubmit={handleSubmit}
+//                 validate={validate}
+//             >
+                
+//                 {() => (
+//                     <>
+//                     <h1>Form</h1>
+//                     <Form className="user-form"> {/* CSS */}
 
-                    <div className="form-group">
-                        <label htmlFor="email">Email:</label>
-                        <Field type="email" id="email" name="email" className="form-control" />
-                        <ErrorMessage name="email" component="div" className="error-message" />
-                    </div>
+//                         <div className="form-group">
+//                             <label htmlFor="name">Nombre:</label>
+//                             <Field type="text" id="name" name="name" className="form-control" />
+//                             <ErrorMessage name="name" component="div" className="error-message" />
+//                         </div>
 
-                    <button type="submit" className="btn btn-primary">Enviar</button>
-                </Form>
-            )}
-        </Formik>
-    );
-};
+//                         <div className="form-group">
+//                             <label htmlFor="email">RFID - Valores:</label>
+//                             <Field type="text" id="rfid" name="rfid" className="form-control" />
+//                             <ErrorMessage name="rfid" component="div" className="error-message" />
+//                         </div>
 
-export default MyForm;
+//                         <button type="submit" className="btn btn-primary">Enviar</button>
+//                     </Form>
+//                     </>
+//                 )}
+//             </Formik>
+//         );
+//     };
+
+
+// export default UserForm
