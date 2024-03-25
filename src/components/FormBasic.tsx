@@ -104,12 +104,13 @@ function Form() {
                     <div className="form-floating m-3">
                         <input type="text"
                             className="form-control"
-                            id="rfid"
+                            id="RFID"
                             placeholder="rfid"
                             value={RFID}
                             onChange={onInputChange} />
-                        <label htmlFor="rfid">RFID</label>
+                        <label htmlFor="RFID">RFID</label>
                     </div>
+                    
                     <button type='submit' className='btn btn-dark mt-2'>Guardar usuario</button>
                     <button className='btn btn-danger mt-2' onClick={resetForm}>Vaciar formulario</button>
 
