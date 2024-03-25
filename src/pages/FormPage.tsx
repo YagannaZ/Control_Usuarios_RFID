@@ -1,12 +1,11 @@
-import { Form } from "react-router-dom"
+import FormBasic from "../components/FormBasic"
 
 
 
 function FormPage () {
     return (
         <div className="container">
-            <h1>Form</h1>
-            <Form/>
+            <FormBasic />
         </div>
     )
 }
