@@ -52,3 +52,23 @@ void loop()
   }
   delay(1000);
 }
+// Loop principal
+const loop = () => {
+  // Si se detecta una tarjeta RFID
+  if (tarjeta_rfid.isCard()) {
+    console.log("Tarjeta detectada:");
+
+    // Leemos la tarjeta
+    tarjeta_rfid.readCardSerial();
+
+    // Imprimimos el número de serie de la tarjeta
+    for (let i = 0; i < 5; i++) {
+      console.log(tarjeta_rfid.serNum[i]);
+    }
+  }
+  setTimeout(loop, 1000); // Espera 1 segundo antes de ejecutar nuevamente el loop
+};
+
+// Llamamos al loop por primera vez
+loop();
+
