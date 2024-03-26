@@ -6,11 +6,13 @@
 // import TableRow from '@mui/material/TableRow';
 // import Paper from '@mui/material/Paper';
 
+import Table from "../components/Table"
+
 function UserTablePage () {
     return (
-        <>
-        <h1>Holas</h1>
-        </>
+        <div className="container">
+            <Table />
+        </div>
     )
 }
 
