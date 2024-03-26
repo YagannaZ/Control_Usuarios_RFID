@@ -1,19 +1,18 @@
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import { db } from "../firebase/firebase.config";
-import { useState } from "react";
-import { IUser } from "../interfaces/userInterface.interface";
-import AlertUserForm from "./AlertUserForm";
+import { useState, useEffect } from "react";
 
-export const UsuariosPage = () => {
-  const [users, setUsers] = useState<IUser[]>([]);
+export const Table = () => {
+  const [users, setUsers] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editState, setEditState] = useState({ edit: false, id: "" });
+  // const [editState, setEditState] = useState({ edit: false, id: "" });
 
   useEffect(() => {
     if (loading) {
       const getUsuarios = async () => {
-        const usersCollection = await getDocs(collection(db, "usuarios"));
-        setUsers(usersCollection.docs.map((doc) => doc.data()));
+        const usersCollection = await getDocs(collection(db, "Usuarios"));
+        // setUsers(usersCollection.docs.map((doc) => doc.data()));
+        setUsers(usersCollection.docs);
         setLoading(false);
       };
 
@@ -26,7 +25,7 @@ export const UsuariosPage = () => {
       <div className="container">
         <div className="row mt-4">
           <div className="col">
-            <h1>Usuarios</h1>
+            {/* <h1>Usuarios</h1> */}
             <hr />
             {loading && <div className="spinner-border" role="status">
               <span className="visually-hidden">Cargando...</span>
@@ -43,9 +42,9 @@ export const UsuariosPage = () => {
                 <tbody>
                   {users.map((user) => (
                     <tr key={user.id}>
-                      <td>{user.name}</td>
-                      <td>{user.RFID}</td>
-                      <td>{user.active}</td>
+                      <td>{user.data().name}</td>
+                      <td>{user.data().RFID}</td>
+                      <td>{user.data().active}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -6,12 +6,12 @@ import { getFirestore } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDWwiCdBeboaSDYaj_lIExlR6KycWz-MgQ",
-  authDomain: "arduino-12f4d.firebaseapp.com",
-  projectId: "arduino-12f4d",
-  storageBucket: "arduino-12f4d.appspot.com",
-  messagingSenderId: "518839453994",
-  appId: "1:518839453994:web:009b53d5678d5f0279f653"
+  apiKey: "AIzaSyCFErg5GNTxrQ4pLRPaHwUP1U1rrLIOPLA",
+  authDomain: "arduino-a117.firebaseapp.com",
+  projectId: "arduino-a117",
+  storageBucket: "arduino-a117.appspot.com",
+  messagingSenderId: "623418416087",
+  appId: "1:623418416087:web:48c6a89b425db238a98992"
 };
 
 // Initialize Firebase
